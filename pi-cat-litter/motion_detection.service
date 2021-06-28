@@ -1,0 +1,14 @@
+[Unit]
+Description=Motion detection service for cat litter
+After=mysqld.service mysql.service
+
+[Service]
+ExecStart=/usr/bin/python3 -u motion_detection.py
+WorkingDirectory=/home/pi/
+StandardOutput=append:/home/pi/execution.log
+StandardError=append:/home/pi/execution.log
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
