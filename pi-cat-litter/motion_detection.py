@@ -13,7 +13,7 @@ FAN_ON_DURATION = 10 * 60		# 10 min
 def printMessage(msg):
 	print(f"{str(datetime.now())} - " + msg)
 
-printMessage("motion detection init...")
+printMessage("Motion detection init...")
 
 def outputHigh():
 	outpin.on()

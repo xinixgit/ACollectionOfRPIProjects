@@ -1,0 +1,14 @@
+[Unit]
+Description=Motion detection service for cat litter
+After=mysqld.service mysql.service
+
+[Service]
+ExecStart=/home/pi/node-v9.7.1-linux-armv6l/bin/node app.js -u db_username -p db_password
+WorkingDirectory=/home/pi/gps-bin
+StandardOutput=file:/home/pi/gps_loc.log
+StandardError=file:/home/pi/gps_loc.log
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
