@@ -22,7 +22,8 @@ const conn = mysql.createConnection({
 
 conn.connect(function(err) {
   if (err) throw err;
-  console.log("Connected!");
+  const nowStr = new Date().toString()
+  console.log('[' + nowStr + '] Connected!');
 });
 
 const stmt = "insert into gps_loc(lat, lng, ts_epoch, t_created, alt, geoidal, valid) VALUES (?, ?, ?, ?, ?, ?, ?)";

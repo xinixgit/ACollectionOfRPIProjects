@@ -6,7 +6,7 @@ from datetime import datetime
 from signal import pause
 
 outpin = LED(22)
-pir = MotionSensor(27)
+pir = MotionSensor(27, sample_rate=1)
 
 FAN_ON_DURATION = 10 * 60		# 10 min
 
@@ -15,7 +15,7 @@ def printMessage(msg):
 
 printMessage("Motion detection init...")
 
-def outputHigh():
+def runfan():
 	outpin.on()
 	printMessage("fan activated.")
 	time.sleep(FAN_ON_DURATION)
@@ -36,19 +36,19 @@ def logdb():
 		printMessage(f"error: {e}")
 
 
-def onMotionDetected():
+def on_motion_detected():
 	logdb()
-	outputHigh()
+	runfan()
 
 
 # Establish a connection
 try:
   conn = mariadb.connect(
-      user="username",
-      password="password",
+      user=username,
+      password=password,
       host="localhost",
       port=3306,
-      database="dbtable"
+      database="exports"
 
   )
   cur = conn.cursor()
@@ -56,9 +56,8 @@ except mariadb.Error as e:
   printMessage(f"error connecting to MariaDB Platform: {e}")
   sys.exit(1)
 
-pir.when_motion = onMotionDetected
-
 printMessage("motion detection ready...")
-pause()
 
-# conn.close()
+while True:
+	pir.wait_for_motion()
+	on_motion_detected()
