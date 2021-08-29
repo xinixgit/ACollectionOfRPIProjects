@@ -1,5 +1,6 @@
 from machine import Pin, PWM
 from StudyBreakStateMachine import StudyBreakStateMachine
+from lcd_controller import LcdController
 
 reset_button = Pin(28, Pin.IN, Pin.PULL_DOWN)
 
@@ -18,7 +19,8 @@ def state_start_callback(state):
         redled.duty_u16(0)
         grnled.value(1)
 
-state_machine = StudyBreakStateMachine(buzzer, state_start_callback)
+lcd_controller = LcdController()
+state_machine = StudyBreakStateMachine(buzzer, lcd_controller, state_start_callback)
 
 def reset_state(pin):
     global state_machine
@@ -28,5 +30,4 @@ reset_button.irq(reset_state, Pin.IRQ_FALLING)
 
 while True:
     state_machine.run()
-
 
