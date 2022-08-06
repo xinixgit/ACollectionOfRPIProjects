@@ -1,0 +1,5 @@
+feed_schedule:
+  - time: "0800"
+    portion: 2
+  - time: "1200"
+    portion: 4
