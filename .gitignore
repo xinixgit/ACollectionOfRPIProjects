@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 .DS_Store
+**/feedem-v2/config.yaml
