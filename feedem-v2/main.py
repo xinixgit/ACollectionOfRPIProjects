@@ -14,6 +14,6 @@ while True:
     min = config.feed_schedule.get_min_until_next_scheduled_feed(now, next_scheduled_feed)
     print('next scheduled feed is: {0} min away'.format(min))
 
-    time.sleep(5)
-
+    time.sleep(min * 60)
     feeder.feed(next_scheduled_feed.portion)
+    time.sleep(60)  # sleep a min to avoid repeating
