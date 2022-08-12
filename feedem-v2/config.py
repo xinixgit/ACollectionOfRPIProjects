@@ -2,10 +2,10 @@ import yaml
 from datetime import time
 
 class ScheduledFeed:
-    def __init__(self, scheduled_feeds):
-        self.hr = int(scheduled_feeds['time'][:2])
-        self.min = int(scheduled_feeds['time'][2:])
-        self.portion = scheduled_feeds['portion']
+    def __init__(self, scheduled_feed):
+        self.hr = int(scheduled_feed['time'][:2])
+        self.min = int(scheduled_feed['time'][2:])
+        self.portion = scheduled_feed['portion']
 
     def __repr__(self):
         hr = ('' if self.hr >= 10 else '0') + str(self.hr)
