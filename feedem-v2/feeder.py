@@ -16,19 +16,21 @@ class Feeder:
         just_pressed = False
         if not self.feed_trigger.is_lit:
             self.feed_trigger.on()
-            while portion > 0:
-                print("feeding 1 portion")
+            while True:
                 while self.detect_button.is_pressed():
                     if not just_pressed:
+                        if portion == 0:
+                            self.feed_trigger.off()
+                            print("feeding completed")
+                            return
+
+                        print("feeding 1 portion") 
+                        portion -= 1
                         just_pressed = True
-                    
-                    time.sleep(0.1)
-                
-                portion -= 1
+
                 just_pressed = False
-                print("1 portion fed")
-            self.feed_trigger.off()
-        print("feeding completed")
+                time.sleep(0.1)
+        
 
     def on_feed_button_pressed(self) -> None:
         print("adhoc feed button pressed")
