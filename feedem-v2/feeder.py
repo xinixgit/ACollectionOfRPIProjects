@@ -17,7 +17,7 @@ class Feeder:
         if not self.feed_trigger.is_lit:
             self.feed_trigger.on()
             while True:
-                while self.detect_button.is_pressed():
+                while self.detect_button.is_pressed:
                     if not just_pressed:
                         if portion == 0:
                             self.feed_trigger.off()

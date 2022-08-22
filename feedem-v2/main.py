@@ -1,12 +1,14 @@
 from config import Config
 from datetime import datetime
 from feeder import Feeder
+from db import get_scheduled_feeds
 import time
 
-config = Config()
 feeder = Feeder()
 
 while True:
+    scheduled_feeds = get_scheduled_feeds()
+    config = Config(scheduled_feeds=scheduled_feeds)
     now = datetime.now().time()
     next_scheduled_feed = config.feed_schedule.get_next_scheduled_feed(now)
     print('next scheduled feed is: {0}'.format(next_scheduled_feed))
