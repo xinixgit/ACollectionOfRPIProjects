@@ -1,16 +1,20 @@
 from config import Config
 from datetime import datetime
 from feeder import Feeder
-from http.cam_streamer import CamStreamer
-from http.event_listener import EventListener
+from addon.cam_streamer import CamStreamer
+from addon.event_listener import EventListener
 from db import get_scheduled_feeds
 import time
 
 feeder = Feeder()
 cam = CamStreamer()
-event_listener = EventListener(on_cam_start_event=cam.start_recording)
+event_listener = EventListener(
+    on_cam_start_event=cam.start_recording,
+    on_cam_stop_event=cam.stop_recording
+)
 event_listener.connect()
 
+# main thread runs feed while addons are run in separate threads
 while True:
     scheduled_feeds = get_scheduled_feeds()
     config = Config(scheduled_feeds=scheduled_feeds)
