@@ -11,7 +11,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     json_str = msg.payload.decode('utf8').replace("'", '"')
     map = json.loads(json_str)
-    print('received {json_str} from {msg.topic}')
+    print('received', json_str, 'from', msg.topic)
 
     if msg.topic == '/feederv2/camera':
         if map['action'] == 'start':

@@ -72,14 +72,19 @@ class CamStreamer():
         handler = partial(StreamingHandler, self.output)
         self.server = StreamingServer(address, handler)
         self.camera = picamera.PiCamera(resolution='800x600', framerate=24)
+        self.streaming = False
 
     def start_recording(self):
-        self.camera.start_recording(self.output, format='mjpeg')
-        thread = Thread(target=self.server.serve_forever)
-        thread.start()
-        print('camera stream started')
+        if not self.streaming:
+            self.camera.start_recording(self.output, format='mjpeg')
+            thread = Thread(target=self.server.serve_forever)
+            thread.start()
+            self.streaming = True
+            print('camera stream started')
 
     def stop_recording(self):
-        self.server.shutdown()
-        self.camera.stop_recording()
-        print('cam streamer stopped')
+        if self.streaming:
+            self.server.shutdown()
+            self.camera.stop_recording()
+            self.streaming = False
+            print('cam streamer stopped')
