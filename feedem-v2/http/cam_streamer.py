@@ -2,20 +2,11 @@ import io
 import picamera
 import logging
 import socketserver
+import time
 from threading import Condition
 from http import server
-
-PAGE="""\
-<html>
-<head>
-<title>picamera MJPEG streaming demo</title>
-</head>
-<body>
-<h1>PiCamera MJPEG Streaming Demo</h1>
-<img src="stream.mjpg" width="640" height="480" />
-</body>
-</html>
-"""
+from threading import Thread
+from functools import partial
 
 class StreamingOutput(object):
     def __init__(self):
@@ -35,18 +26,15 @@ class StreamingOutput(object):
         return self.buffer.write(buf)
 
 class StreamingHandler(server.BaseHTTPRequestHandler):
+    def __init__(self, output, *args, **kwargs):
+        self.output = output
+        super().__init__(*args, **kwargs)
+
     def do_GET(self):
         if self.path == '/':
             self.send_response(301)
-            self.send_header('Location', '/index.html')
+            self.send_header('Location', 'stream.mjpg')
             self.end_headers()
-        elif self.path == '/index.html':
-            content = PAGE.encode('utf-8')
-            self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
-            self.send_header('Content-Length', len(content))
-            self.end_headers()
-            self.wfile.write(content)
         elif self.path == '/stream.mjpg':
             self.send_response(200)
             self.send_header('Age', 0)
@@ -56,9 +44,9 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
             try:
                 while True:
-                    with output.condition:
-                        output.condition.wait()
-                        frame = output.frame
+                    with self.output.condition:
+                        self.output.condition.wait()
+                        frame = self.output.frame
                     self.wfile.write(b'--FRAME\r\n')
                     self.send_header('Content-Type', 'image/jpeg')
                     self.send_header('Content-Length', len(frame))
@@ -77,12 +65,24 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
-    output = StreamingOutput()
-    camera.start_recording(output, format='mjpeg')
-    try:
+class CamStreamer():
+    def __init__(self):
         address = ('', 8000)
-        server = StreamingServer(address, StreamingHandler)
-        server.serve_forever()
-    finally:
-        camera.stop_recording()
+        self.output = StreamingOutput()
+        handler = partial(StreamingHandler, self.output)
+        self.server = StreamingServer(address, handler)
+        self.camera = picamera.PiCamera(resolution='800x600', framerate=24)
+
+    def start_recording(self):
+        thread = Thread(target=self.start_recording_in_thread)
+        thread.start()
+        time.sleep(30)
+        self.stop_recording()
+
+    def stop_recording(self):
+        self.server.shutdown()
+        self.camera.stop_recording()
+
+    def start_recording_in_thread(self):
+        self.camera.start_recording(self.output, format='mjpeg')
+        self.server.serve_forever()

@@ -1,10 +1,15 @@
 from config import Config
 from datetime import datetime
 from feeder import Feeder
+from http.cam_streamer import CamStreamer
+from http.event_listener import EventListener
 from db import get_scheduled_feeds
 import time
 
 feeder = Feeder()
+cam = CamStreamer()
+event_listener = EventListener(on_cam_start_event=cam.start_recording)
+event_listener.connect()
 
 while True:
     scheduled_feeds = get_scheduled_feeds()
