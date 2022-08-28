@@ -1,10 +1,10 @@
-from config import Config
 from datetime import datetime
-from feeder import Feeder
-from addon.web_server import WebServer
-from addon.cam_request_helper import CameraStreamer
-from addon.event_listener import EventListener
-from db import DBRepo
+from pkg.feeder import Feeder
+from pkg.ext.web_server import WebServer
+from pkg.ext.cam_request_helper import CameraStreamer
+from pkg.ext.event_listener import EventListener
+from pkg.db.repo import DBRepo
+from pkg.domain.config import Config
 import time
 
 feeder = Feeder()

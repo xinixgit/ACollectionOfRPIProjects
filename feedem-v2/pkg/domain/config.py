@@ -4,9 +4,9 @@ from datetime import time
 # Object imported by reading the yaml config file, served as an intermediary 
 # before moving to DB based config persistence. Do not use.
 class ScheduledFeed:
-    def __init__(self, time: str, portion: int):
-        self.hr = int(time[:2])
-        self.min = int(time[2:])
+    def __init__(self, hr: int, min: int, portion: int):
+        self.hr = hr
+        self.min = min
         self.portion = portion
 
     def __repr__(self):
