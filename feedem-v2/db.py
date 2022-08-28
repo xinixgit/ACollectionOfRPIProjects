@@ -12,19 +12,15 @@ def create_db():
     con.commit()
     con.close()
 
-def get_scheduled_feeds() -> list[ScheduledFeed]:
-    scheduled_feeds = []
-    con = sqlite3.connect(FEEDER_DB)
-    cur = con.cursor()
-    res = cur.execute("SELECT time, portion FROM scheduled_feeds ORDER BY time")
-    for row in res:
-        feed = ScheduledFeed(row[0], row[1])
-        scheduled_feeds.append(feed)
-
-    con.close()
-    return scheduled_feeds
-
-
 class DBRepo:
     def get_scheduled_feeds(self):
-        return get_scheduled_feeds()
+        scheduled_feeds = []
+        con = sqlite3.connect(FEEDER_DB)
+        cur = con.cursor()
+        res = cur.execute("SELECT time, portion FROM scheduled_feeds ORDER BY time")
+        for row in res:
+            feed = ScheduledFeed(row[0], row[1])
+            scheduled_feeds.append(feed)
+
+        con.close()
+        return scheduled_feeds

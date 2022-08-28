@@ -2,21 +2,19 @@ from config import Config
 from datetime import datetime
 from feeder import Feeder
 from addon.web_server import WebServer
-from addon.cam_streamer import CamStreamer
+from addon.cam_request_helper import CameraStreamer
 from addon.event_listener import EventListener
 from db import DBRepo
 import time
 
 feeder = Feeder()
 
-cam = CamStreamer()
-cam.start_server()
-
+cam = CameraStreamer()
 event_listener = EventListener(cam)
 event_listener.connect()
 
 dbRepo = DBRepo()
-webSvr = WebServer(dbRepo)
+webSvr = WebServer(dbRepo=dbRepo, cam=cam)
 webSvr.start()
 
 # main thread runs feed while addons are run in separate threads
