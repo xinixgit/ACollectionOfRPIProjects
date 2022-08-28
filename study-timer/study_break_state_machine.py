@@ -21,11 +21,19 @@ class StudyBreakStateMachine:
         buzzer = self.buzzer
         while self.reset is False:
             for i in range(0, 4):
-                buzzer.duty_u16(40000)
-                sleep(0.1)
-                buzzer.duty_u16(0)
-                sleep(0.1)
-            sleep(0.5)
+                if self.reset is True:
+                    break
+                for i in range(0, 4):
+                    buzzer.duty_u16(40000)
+                    sleep(0.1)
+                    buzzer.duty_u16(0)
+                    sleep(0.1)
+                sleep(0.5)
+
+            for i in range(0, self.BREAK_DURATION_MS / 1000):
+                if self.reset is True:
+                    break
+                sleep(1)
 
     def next_state(self):
         self.state = (self.state + 1) % 4
