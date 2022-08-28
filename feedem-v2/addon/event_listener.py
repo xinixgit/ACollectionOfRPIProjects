@@ -1,4 +1,5 @@
 from threading import Thread
+from .cam_streamer import CamStreamer
 import paho.mqtt.client as mqtt
 import json
 
@@ -15,18 +16,16 @@ def on_message(client, userdata, msg):
 
     if msg.topic == '/feederv2/camera':
         if map['action'] == 'start':
-            userdata['on_cam_start_event']()
+            userdata['cam'].start_recording()
         elif map['action'] == 'stop':
-            userdata['on_cam_stop_event']()
-
+            userdata['cam'].stop_recording()
 
 class EventListener:
-    def __init__(self, on_cam_start_event, on_cam_stop_event):  
-        fn_map = {
-            'on_cam_start_event': on_cam_start_event,
-            'on_cam_stop_event': on_cam_stop_event,
+    def __init__(self, cam: CamStreamer):  
+        userdata = {
+            'cam': cam
         }
-        self.client = mqtt.Client(userdata=fn_map)
+        self.client = mqtt.Client(userdata=userdata)
         self.client.on_connect = on_connect
         self.client.on_message = on_message
 

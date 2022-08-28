@@ -10,10 +10,9 @@ import time
 feeder = Feeder()
 
 cam = CamStreamer()
-event_listener = EventListener(
-    on_cam_start_event=cam.start_recording,
-    on_cam_stop_event=cam.stop_recording
-)
+cam.start_server()
+
+event_listener = EventListener(cam)
 event_listener.connect()
 
 dbRepo = DBRepo()

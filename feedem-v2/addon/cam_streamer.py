@@ -2,9 +2,8 @@ import io
 import picamera
 import logging
 import socketserver
-from threading import Condition
+from threading import Condition, Thread
 from http import server
-from threading import Thread
 from functools import partial
 
 class StreamingOutput(object):
@@ -73,17 +72,18 @@ class CamStreamer():
         self.camera = picamera.PiCamera(resolution='800x600', framerate=24)
         self.streaming = False
 
+    def start_server(self):
+        thread = Thread(target=self.server.serve_forever)
+        thread.start()
+
     def start_recording(self):
         if not self.streaming:
             self.camera.start_recording(self.output, format='mjpeg')
-            thread = Thread(target=self.server.serve_forever)
-            thread.start()
             self.streaming = True
             print('camera stream started')
 
     def stop_recording(self):
         if self.streaming:
-            self.server.shutdown()
             self.camera.stop_recording()
             self.streaming = False
             print('cam streamer stopped')

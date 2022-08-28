@@ -2,7 +2,7 @@ from http import server
 from functools import partial
 from threading import Thread
 
-from feed_req_handler import FeedRequestHandler
+from .feed_req_handler import FeedRequestHandler
 
 class RequestHandler(server.BaseHTTPRequestHandler):
     def __init__(self, dbRepo, *args, **kwargs):
