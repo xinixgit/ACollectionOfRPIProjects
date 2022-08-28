@@ -2,7 +2,6 @@ import io
 import picamera
 import logging
 import socketserver
-import time
 from threading import Condition
 from http import server
 from threading import Thread

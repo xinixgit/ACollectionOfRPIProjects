@@ -23,3 +23,8 @@ def get_scheduled_feeds() -> list[ScheduledFeed]:
 
     con.close()
     return scheduled_feeds
+
+
+class DBRepo:
+    def get_scheduled_feeds(self):
+        return get_scheduled_feeds()
