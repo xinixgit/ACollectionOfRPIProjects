@@ -1,5 +1,5 @@
 from threading import Thread
-from .cam_streamer import CamStreamer
+from .cam_request_helper import CameraStreamer
 import paho.mqtt.client as mqtt
 import json
 
@@ -21,7 +21,7 @@ def on_message(client, userdata, msg):
             userdata['cam'].stop_recording()
 
 class EventListener:
-    def __init__(self, cam: CamStreamer):  
+    def __init__(self, cam: CameraStreamer):  
         userdata = {
             'cam': cam
         }
