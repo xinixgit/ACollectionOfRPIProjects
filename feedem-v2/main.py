@@ -1,6 +1,6 @@
 from datetime import datetime
 from pkg.feeder import Feeder
-from pkg.ext.web_server import WebServer
+from pkg.ext.web_server import WebServer, RequestHandlerContext
 from pkg.ext.cam_request_helper import CameraStreamer
 from pkg.ext.event_listener import EventListener
 from pkg.db.repo import DBRepo
@@ -14,7 +14,8 @@ event_listener = EventListener(cam)
 event_listener.connect()
 
 dbRepo = DBRepo()
-webSvr = WebServer(dbRepo=dbRepo, cam=cam)
+ctx = RequestHandlerContext(dbRepo=dbRepo, cam=cam, feeder=feeder)
+webSvr = WebServer(ctx)
 webSvr.start()
 
 # main thread runs feed while addons are run in separate threads
