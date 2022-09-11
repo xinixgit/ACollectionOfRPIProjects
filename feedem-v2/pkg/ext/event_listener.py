@@ -29,7 +29,8 @@ class EventListener:
         self.client.on_connect = on_connect
         self.client.on_message = on_message
 
-    def connect(self):
+    def connect(self, user='', pwd=''):
+        self.client.username_pw_set(user, pwd)
         self.client.connect(MQTT_HOST, 1883, 60)
         thread = Thread(target=self.client.loop_forever)
         thread.start()

@@ -6,13 +6,14 @@ from pkg.ext.event_listener import EventListener
 from pkg.db.repo import DBRepo
 from pkg.domain.config import Config
 import time
+import sys
 
 feeder = Feeder()
 cam = CameraStreamer()
 
 try:
     event_listener = EventListener(cam)
-    event_listener.connect()
+    event_listener.connect(user=sys.argv[1], pwd=sys.argv[2])
 except:
     print("Failed to start MQTT event listener")
 
