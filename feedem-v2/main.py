@@ -8,10 +8,13 @@ from pkg.domain.config import Config
 import time
 
 feeder = Feeder()
-
 cam = CameraStreamer()
-event_listener = EventListener(cam)
-event_listener.connect()
+
+try:
+    event_listener = EventListener(cam)
+    event_listener.connect()
+except:
+    print("Failed to start MQTT event listener")
 
 dbRepo = DBRepo()
 ctx = RequestHandlerContext(dbRepo=dbRepo, cam=cam, feeder=feeder)
