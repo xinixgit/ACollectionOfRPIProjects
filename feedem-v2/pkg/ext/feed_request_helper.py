@@ -8,7 +8,7 @@ class FeedRequestHelper:
     def __init__(self, dbRepo: repo.DBRepo):
         self.dbRepo = dbRepo
 
-    def get_feed(self, reqHandler: server.BaseHTTPRequestHandler):
+    def get_feeds(self, reqHandler: server.BaseHTTPRequestHandler):
         scheduled_feeds = self.dbRepo.get_scheduled_feeds()
         payload = json.dumps(scheduled_feeds, cls=self.DefaultJsonEncoder)
 
@@ -17,10 +17,10 @@ class FeedRequestHelper:
         reqHandler.end_headers()
         reqHandler.wfile.write(bytes(payload, "utf-8"))
 
-    def save_feed(self, objList, reqHandler: server.BaseHTTPRequestHandler):
+    def save_feeds(self, objList, reqHandler: server.BaseHTTPRequestHandler):
         feeds = []
         for obj in objList:
-            feeds.append(config.ScheduledFeed(int(obj['hr']), int(obj['min']), int(obj['portion'])))
+            feeds.append((obj['time'], int(obj['portion'])))
 
         self.dbRepo.overwrite_scheduled_feeds(feeds)
         reqHandler.send_response(200)

@@ -1,4 +1,5 @@
 import socketserver
+import json
 from http import server
 from functools import partial
 from threading import Thread
@@ -41,8 +42,8 @@ class WebServer:
             super().__init__(*args, **kwargs)
 
         def do_GET(self):
-            if self.path == '/feed':
-                self.feedRequestHelper.get_feed(reqHandler=self)
+            if self.path == '/feeds':
+                self.feedRequestHelper.get_feeds(reqHandler=self)
             elif self.path == '/stream.mjpg':
                 self.cameraRequestHelper.get_camera_stream(reqHandler=self)
             else:
@@ -52,3 +53,8 @@ class WebServer:
         def do_POST(self):
             if self.path == '/feed':
                 self.ctx.feeder.feed(1)
+            elif self.path == '/feeds':
+                payload = self.rfile.read(int(self.headers['Content-Length']))
+                objList = json.loads(payload)
+                self.feedRequestHelper.save_feeds(objList=objList, reqHandler=self)
+                self.send_response(200)

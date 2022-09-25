@@ -1,5 +1,7 @@
 import sqlite3
+import string
 from ..domain import config
+from typing import Tuple
 
 FEEDER_DB = "feeder.db"
 SCHEDULED_FEEDS_TBL = "scheduled_feeds"
@@ -18,15 +20,11 @@ class DBRepo:
         con.close()
         return scheduled_feeds
 
-    def overwrite_scheduled_feeds(self, scheduled_feeds: list[config.ScheduledFeed]):
-        records = []
-        for feed in scheduled_feeds:
-            records.append((str(feed.hr) + str(feed.min), feed.portion))
-
+    def overwrite_scheduled_feeds(self, feeds: Tuple[str, int]):
         con = sqlite3.connect(FEEDER_DB)
         cur = con.cursor()
         cur.execute("DELETE FROM {0}".format(SCHEDULED_FEEDS_TBL))
-        cur.executemany("INSERT INTO {0} VALUES(?,?)", records)
+        cur.executemany("INSERT INTO {0} (time, portion) VALUES(?,?)".format(SCHEDULED_FEEDS_TBL), feeds)
         print(cur.rowcount, "feeds have been inserted")
 
         con.commit()
