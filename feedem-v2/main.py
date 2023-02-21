@@ -11,11 +11,11 @@ import sys
 feeder = Feeder()
 cam = CameraStreamer()
 
-try:
-    event_listener = EventListener(cam)
-    event_listener.connect(user=sys.argv[1], pwd=sys.argv[2])
-except:
-    print("Failed to start MQTT event listener")
+# try:
+#     event_listener = EventListener(cam)
+#     event_listener.connect(user=sys.argv[1], pwd=sys.argv[2])
+# except:
+#     print("Failed to start MQTT event listener")
 
 dbRepo = DBRepo()
 ctx = RequestHandlerContext(dbRepo=dbRepo, cam=cam, feeder=feeder)

@@ -26,6 +26,7 @@ class CameraStreamer():
     def __init__(self):
         self.output = StreamingOutput()
         self.camera = picamera.PiCamera(resolution='800x600', framerate=24)
+        self.camera.rotation = 180
         self.streaming = False
     
     def start_recording(self):

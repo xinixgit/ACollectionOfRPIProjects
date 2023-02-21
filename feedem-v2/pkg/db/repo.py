@@ -6,6 +6,7 @@ from typing import Tuple
 FEEDER_DB = "feeder.db"
 SCHEDULED_FEEDS_TBL = "scheduled_feeds"
 
+
 class DBRepo:
     def get_scheduled_feeds(self) -> list[config.ScheduledFeed]:
         scheduled_feeds = []
