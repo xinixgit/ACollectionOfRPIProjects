@@ -3,22 +3,30 @@ from pkg.feeder import Feeder
 from pkg.ext.web_server import WebServer, RequestHandlerContext
 from pkg.ext.cam_request_helper import CameraStreamer
 from pkg.ext.event_listener import EventListener
+from pkg.db.migration import MigrationRunner
 from pkg.db.repo import DBRepo
 from pkg.domain.config import Config
 import time
 import sys
 
+db_migration = MigrationRunner()
+db_migration.execute()
+
+try:
+    event_listener = EventListener()
+    event_listener.connect(user=sys.argv[1], pwd=sys.argv[2])
+except:
+    print("Failed to start MQTT event listener")
+
 feeder = Feeder()
-cam = CameraStreamer()
-
-# try:
-#     event_listener = EventListener(cam)
-#     event_listener.connect(user=sys.argv[1], pwd=sys.argv[2])
-# except:
-#     print("Failed to start MQTT event listener")
-
 dbRepo = DBRepo()
-ctx = RequestHandlerContext(dbRepo=dbRepo, cam=cam, feeder=feeder)
+cam = CameraStreamer()
+ctx = RequestHandlerContext(
+    dbRepo=dbRepo,
+    cam=cam,
+    feeder=feeder,
+    event_listener=event_listener
+)
 webSvr = WebServer(ctx)
 webSvr.start()
 
@@ -30,9 +38,11 @@ while True:
     next_scheduled_feed = config.feed_schedule.get_next_scheduled_feed(now)
     print('next scheduled feed is: {0}'.format(next_scheduled_feed))
 
-    min = config.feed_schedule.get_min_until_next_scheduled_feed(now, next_scheduled_feed)
+    min = config.feed_schedule.get_min_until_next_scheduled_feed(
+        now, next_scheduled_feed)
     print('next scheduled feed is: {0} min away'.format(min))
 
     time.sleep(min * 60)
     feeder.feed(next_scheduled_feed.portion)
+    event_listener.publish_portion_fed(next_scheduled_feed.portion)
     time.sleep(60)  # sleep a min to avoid repeating

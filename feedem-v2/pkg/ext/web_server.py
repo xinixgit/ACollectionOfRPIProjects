@@ -7,14 +7,16 @@ from threading import Thread
 from ..db import repo
 from ..feeder import Feeder
 from .feed_request_helper import FeedRequestHelper
+from .event_listener import EventListener
 from .cam_request_helper import CameraRequestHelper, CameraStreamer
 
 
 class RequestHandlerContext:
-    def __init__(self, dbRepo: repo.DBRepo, cam: CameraStreamer, feeder: Feeder):
+    def __init__(self, dbRepo: repo.DBRepo, cam: CameraStreamer, feeder: Feeder, event_listener: EventListener):
         self.dbRepo = dbRepo
         self.cam = cam
         self.feeder = feeder
+        self.event_listener = event_listener
 
 
 class WebServer:
@@ -41,7 +43,6 @@ class WebServer:
             self.ctx = ctx
             self.feedRequestHelper = FeedRequestHelper(dbRepo=ctx.dbRepo)
             self.cameraRequestHelper = CameraRequestHelper(cam=ctx.cam)
-            self.cam = ctx.cam
             super().__init__(*args, **kwargs)
 
         def do_GET(self):
@@ -56,25 +57,27 @@ class WebServer:
         def do_POST(self):
             if self.path == '/feed':
                 self.ctx.feeder.feed(1)
+                self.ctx.event_listener.publish_portion_fed(1)
                 self.send_response(200)
                 self.send_standard_header(content_type='application/json')
             elif self.path == '/feeds':
                 payload = self.rfile.read(int(self.headers['Content-Length']))
                 objList = json.loads(payload)
-                self.feedRequestHelper.save_feeds(objList=objList, reqHandler=self)
+                self.feedRequestHelper.save_feeds(
+                    objList=objList, reqHandler=self)
                 self.send_response(200)
             elif self.path == '/cam/start':
-                self.cam.start_recording()
+                self.ctx.cam.start_recording()
                 self.send_response(200)
                 self.send_standard_header()
             elif self.path == '/cam/stop':
-                self.cam.stop_recording()
+                self.ctx.cam.stop_recording()
                 self.send_response(200)
                 self.send_standard_header()
             else:
                 self.send_error(404)
 
-        def send_standard_header(self, content_type = 'text/html'):
+        def send_standard_header(self, content_type='text/html'):
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
             self.send_header('Content-Type', content_type + '; charset=utf-8')
