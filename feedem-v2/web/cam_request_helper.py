@@ -3,7 +3,7 @@ import picamera
 import logging
 from threading import Condition, Thread
 from http import server
-from functools import partial
+
 
 class StreamingOutput(object):
     def __init__(self):
@@ -22,13 +22,14 @@ class StreamingOutput(object):
             self.buffer.seek(0)
         return self.buffer.write(buf)
 
+
 class CameraStreamer():
     def __init__(self):
         self.output = StreamingOutput()
         self.camera = picamera.PiCamera(resolution='800x600', framerate=24)
         self.camera.rotation = 180
         self.streaming = False
-    
+
     def start_recording(self):
         if not self.streaming:
             self.camera.start_recording(self.output, format='mjpeg')
@@ -54,7 +55,8 @@ class CameraRequestHelper():
         reqHandler.send_header('Age', 0)
         reqHandler.send_header('Cache-Control', 'no-cache, private')
         reqHandler.send_header('Pragma', 'no-cache')
-        reqHandler.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
+        reqHandler.send_header(
+            'Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
         reqHandler.end_headers()
         try:
             while True:

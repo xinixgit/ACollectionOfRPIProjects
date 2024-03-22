@@ -1,11 +1,11 @@
 from datetime import datetime
-from pkg.feeder import Feeder
-from pkg.ext.web_server import WebServer, RequestHandlerContext
-from pkg.ext.cam_request_helper import CameraStreamer
-from pkg.ext.event_listener import EventListener
-from pkg.db.migration import MigrationRunner
-from pkg.db.repo import DBRepo
-from pkg.domain.config import Config
+from feeder.feeder import Feeder
+from web.web_server import WebServer, RequestHandlerContext
+from web.cam_request_helper import CameraStreamer
+from web.event_listener import EventListener
+from db.migration import MigrationRunner
+from db.repo import DBRepo
+from domain.config import Config
 import time
 import sys
 

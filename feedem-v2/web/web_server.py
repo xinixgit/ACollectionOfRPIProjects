@@ -4,8 +4,8 @@ from http import server
 from functools import partial
 from threading import Thread
 
-from ..db import repo
-from ..feeder import Feeder
+from db import repo
+from feeder.feeder import Feeder
 from .feed_request_helper import FeedRequestHelper
 from .event_listener import EventListener
 from .cam_request_helper import CameraRequestHelper, CameraStreamer

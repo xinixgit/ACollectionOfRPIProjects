@@ -1,8 +1,8 @@
 from http import server
 from json import JSONEncoder
-from ..domain import config
-from ..db import repo
+from db import repo
 import json
+
 
 class FeedRequestHelper:
     def __init__(self, dbRepo: repo.DBRepo):

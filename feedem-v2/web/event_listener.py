@@ -2,7 +2,7 @@ from threading import Thread
 import paho.mqtt.client as mqtt
 import json
 
-MQTT_HOST = "192.168.0.181"
+MQTT_HOST = "10.12.0.188"
 
 
 def on_connect(client, userdata, flags, rc):
@@ -28,7 +28,7 @@ class EventListener:
 
     def connect(self, user='', pwd=''):
         self.client.username_pw_set(user, pwd)
-        self.client.connect(MQTT_HOST, 1883, 60)
+        self.client.connect(host=MQTT_HOST, port=1883, keepalive=30)
         thread = Thread(target=self.client.loop_forever)
         thread.start()
         print("event listener started")
