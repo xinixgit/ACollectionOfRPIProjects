@@ -12,12 +12,13 @@ import sys
 db_migration = MigrationRunner()
 db_migration.execute()
 
-try:
-    event_listener = EventListener()
-    event_listener.connect(user=sys.argv[1], pwd=sys.argv[2])
-except:
-    print("Failed to start MQTT event listener")
-
+# try:
+#     event_listener = EventListener()
+#     event_listener.connect(user=sys.argv[1], pwd=sys.argv[2])
+# except Exception as err:
+#     print(f"Unexpected {err=}, {type(err)=}")
+#     print("Failed to start MQTT event listener")
+event_listener = EventListener(user=sys.argv[1], pwd=sys.argv[2])
 feeder = Feeder()
 dbRepo = DBRepo()
 cam = CameraStreamer()
