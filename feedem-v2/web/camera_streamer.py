@@ -44,32 +44,3 @@ class CameraStreamer():
 
     def get_output(self):
         return self.output
-
-
-class CameraRequestHelper():
-    def __init__(self, cam: CameraStreamer):
-        self.output = cam.get_output()
-
-    def get_camera_stream(self, reqHandler: server.BaseHTTPRequestHandler):
-        reqHandler.send_response(200)
-        reqHandler.send_header('Age', 0)
-        reqHandler.send_header('Cache-Control', 'no-cache, private')
-        reqHandler.send_header('Pragma', 'no-cache')
-        reqHandler.send_header(
-            'Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
-        reqHandler.end_headers()
-        try:
-            while True:
-                with self.output.condition:
-                    self.output.condition.wait()
-                    frame = self.output.frame
-                reqHandler.wfile.write(b'--FRAME\r\n')
-                reqHandler.send_header('Content-Type', 'image/jpeg')
-                reqHandler.send_header('Content-Length', len(frame))
-                reqHandler.end_headers()
-                reqHandler.wfile.write(frame)
-                reqHandler.wfile.write(b'\r\n')
-        except Exception as e:
-            logging.warning(
-                'Removed streaming client %s: %s',
-                reqHandler.client_address, str(e))

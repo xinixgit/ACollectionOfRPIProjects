@@ -3,16 +3,23 @@ import time
 
 
 class Feeder:
-    def __init__(self):
-        # detect signal from machine to know 1 portion has been fed
-        self.detect_button = Button(23)
+    def __init__(
+            self,
+            detect_button: Button,
+            feed_button: Button,
+            feed_trigger: LED,
+    ):
+        """
+        Args:
+            detect_button:  detect signal from machine to know 1 portion has been fed
+            feed_button:    physical button, feed 1 portion when pressed
+            feed_trigger:   delivers a feed signal to transistor when activated
+        """
+        self.detect_button = detect_button
         self.detect_button.when_pressed = self.on_detect_button_pressed
-
-        self.feed_button = Button(24)  # feed 1 portion when pressed
+        self.feed_button = feed_button
         self.feed_button.when_pressed = self.on_feed_button_pressed
-
-        # delivers a feed signal to transistor when activated
-        self.feed_trigger = LED(25)
+        self.feed_trigger = feed_trigger
 
     def feed(self, portion: int) -> None:
         print("feeding {0} portions started".format(portion))

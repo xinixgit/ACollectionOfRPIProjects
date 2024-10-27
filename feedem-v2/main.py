@@ -1,3 +1,4 @@
+from gpiozero import Button, LED
 from datetime import datetime
 from feeder.feeder import Feeder
 from web.web_server import WebServer, RequestHandlerContext
@@ -18,15 +19,26 @@ db_migration.execute()
 # except Exception as err:
 #     print(f"Unexpected {err=}, {type(err)=}")
 #     print("Failed to start MQTT event listener")
-event_listener = EventListener(user=sys.argv[1], pwd=sys.argv[2])
-feeder = Feeder()
+
+detect_button = Button(23)
+feed_button = Button(24)
+feed_trigger = LED(25)
+feeder = Feeder(
+    detect_button=detect_button,
+    feed_button=feed_button,
+    feed_trigger=feed_trigger,
+)
+
 dbRepo = DBRepo()
 cam = CameraStreamer()
+event_listener = EventListener(user=sys.argv[1], pwd=sys.argv[2])
+led = LED(17)
 ctx = RequestHandlerContext(
     dbRepo=dbRepo,
     cam=cam,
     feeder=feeder,
-    event_listener=event_listener
+    event_listener=event_listener,
+    led=led,
 )
 webSvr = WebServer(ctx)
 webSvr.start()
